@@ -1,0 +1,68 @@
+<div>
+    <h2>Admin persons</h2>
+
+    <h3>Add new Person</h3>
+    First name:
+    <input type="text" placeholder="First Name" [(ngModel)]="fn">
+    <br> Last name:
+    <input type="text" placeholder="Last Name" [(ngModel)]="ln">
+    <br>
+    <button (click)="savePerson(fn, ln)">Save</button>
+
+    <h3>All persons</h3>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>First Name</th>
+                <th>Last name</th>
+                <th>Mother</th>
+                <th>Father</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let p of persons">
+                <td>{{p.id}}</td>
+                <td>{{p.firstName}}</td>
+                <td>{{p.lastName}}</td>
+                <td>
+                    <div *ngIf="p.mother">
+                        {{p.mother.firstName}}, {{p.mother.lastName}}
+                    </div>
+                </td>
+                <td>
+                    <div *ngIf="p.father">
+                        {{p.father.firstName}}, {{p.father.lastName}}
+                    </div>
+                </td>
+                <td>
+                    <button (click)="editPerson(p)">Edit</button>
+                    <button>View deseases</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div *ngIf="currentPerson.id">
+        <div>
+            Assign to: {{currentPerson.id}} - {{currentPerson.firstName}} {{currentPerson.lastName}}
+        </div>
+        Select mother:
+        <select [(ngModel)]="selectedParentMother">
+            <option *ngFor="let p of persons" [ngValue]="p">{{p.firstName}}, {{p.lastName}}</option>
+        </select>
+        <button (click)="assignParent(selectedParentMother, 'mother')">Assign mother</button>
+        <hr> Select father:
+        <select [(ngModel)]="selectedParentFather">
+            <option *ngFor="let p of persons" [ngValue]="p">{{p.firstName}}, {{p.lastName}}</option>
+        </select>
+        <button (click)="assignParent(selectedParentFather, 'father')">Assign father</button>
+        <hr> Associate user:
+        <select [(ngModel)]="selectedUserAssociation">
+            <option *ngFor="let u of users" [ngValue]="u">{{u.id}} - {{u.email}}</option>
+        </select>
+        <button (click)="assignUser(selectedUserAssociation)">Assign user</button>
+    </div>
+
+</div>

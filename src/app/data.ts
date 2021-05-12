@@ -464,6 +464,7 @@ export const EDGE_DATA = [
   { from: 'Richard Fuller', to: 'Joe Vargas' },
   { from: 'Richard Fuller', to: 'Robert Hartman' },
   { from: 'David Kerry', to: 'Aaron Buckman' },
+  { from: 'Richard Fuller', to: 'Aaron Buckman' },
   { from: 'David Kerry', to: 'Joy Medico' },
   { from: 'David Kerry', to: 'Walter Hastings' },
   { from: 'David Kerry', to: 'Danny Welch' },

@@ -39,6 +39,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { LoginComponent } from './login/login.component';
 
 import {Routes, RouterModule} from '@angular/router';
+import { GraphContainerComponent } from './graph-container/graph-container.component';
+import { AdminPersonsComponent } from './admin-persons/admin-persons.component';
 
 const routes : Routes = [
   {
@@ -47,13 +49,17 @@ const routes : Routes = [
   },
   {
     path : 'graph',
-    component : GraphComponentComponent
+    component : GraphContainerComponent
+  },
+  {
+    path : 'admin-persons',
+    component: AdminPersonsComponent
   }
 ]
 
 @NgModule({
   entryComponents: [NodeComponent],
-  declarations: [AppComponent, GraphComponentComponent, PropertiesViewComponent, NodeComponent, LoginComponent],
+  declarations: [AppComponent, GraphComponentComponent, PropertiesViewComponent, NodeComponent, LoginComponent, GraphContainerComponent, AdminPersonsComponent],
   imports: [BrowserModule, FormsModule, HttpClientModule, RouterModule.forRoot(routes)],
   providers: [],
   bootstrap: [AppComponent]

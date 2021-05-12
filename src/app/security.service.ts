@@ -50,7 +50,7 @@ export class SecurityService {
     localStorage.setItem("access_token", token.access_token);
   }
 
-
+  // TODO: delete?
   configureHeaderOptionsForOAuthPOST() {
     let headers =
       new HttpHeaders({
