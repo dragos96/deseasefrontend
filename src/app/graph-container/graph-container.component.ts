@@ -33,7 +33,8 @@ import {
   ComponentFactoryResolver,
   Injector,
   NgZone,
-  ViewChild
+  ViewChild,
+  OnInit
 } from '@angular/core'
 import {
   IArrow,
@@ -47,61 +48,103 @@ import {
   INode
 } from 'yfiles'
 import { GraphComponentComponent } from './../graph-component/graph-component.component'
-import { EDGE_DATA, NODE_DATA } from './../data'
+import { EDGE_DATA } from './../data'
 import 'yfiles/view-layout-bridge.js'
-import { Person } from './../person'
+import { Person } from './../model/Person'
 import { NodeComponentStyle } from './../NodeComponentStyle'
+import { PersonsService } from '../persons.service';
+import { SecurityService } from '../security.service';
+
+const NODE_DATA_OLD = [
+
+  {
+    id: 1,
+    firstName: "Jameson",
+    lastName: "James",
+    name: "Jameson James"
+  },
+  {
+    id: 2,
+    firstName: "Svenson",
+    lastName: "Sven",
+    name: "Svenson Sven"
+  }
+]
 
 @Component({
   selector: 'app-graph-container',
   templateUrl: './graph-container.component.html',
   styleUrls: ['./graph-container.component.css']
 })
-export class GraphContainerComponent implements AfterViewInit {
+export class GraphContainerComponent implements AfterViewInit, OnInit {
   title = 'app'
 
   @ViewChild(GraphComponentComponent)
   private gcComponent!: GraphComponentComponent
 
   public currentPerson?: Person
+  NODE_DATA: Person[] = [];
 
   // eslint-disable-next-line no-useless-constructor
   constructor(
     private _injector: Injector,
     private _resolver: ComponentFactoryResolver,
     private _appRef: ApplicationRef,
-    private _zone: NgZone
-  ) {}
+    private _zone: NgZone,
+    private personService: PersonsService,
+    private securityService: SecurityService
+  ) { }
+
+  ngOnInit() {
+    // TODO: find by family id
+    console.log('STEP NG ON INIT')
+
+  }
 
   ngAfterViewInit() {
+    console.log('STEP AFTER VIEW INIT')
     // run outside Angular so the change detection won't slow down yFiles
-    this._zone.runOutsideAngular(() => {
-      const graphComponent = this.gcComponent.graphComponent
-      const graph = graphComponent.graph
 
-      graph.nodeDefaults.size = new Size(285, 100)
-      graph.nodeDefaults.style = new NodeComponentStyle(
-        this._injector,
-        this._resolver,
-        this._appRef,
-        this._zone
-      )
+    this.personService.findAll()
+      .subscribe(rez => {
+        console.log('persons: ', rez);
+        this.NODE_DATA = rez;
 
-      graph.edgeDefaults.style = new PolylineEdgeStyle({
-        stroke: '2px rgb(170, 170, 170)',
-        targetArrow: IArrow.NONE
-      })
 
-      graphComponent.addCurrentItemChangedListener(() => {
-        this.currentPerson = graphComponent.currentItem!.tag
-      })
 
-      createSampleGraph(graph)
+        this._zone.runOutsideAngular(() => {
+          const graphComponent = this.gcComponent.graphComponent
+          const graph = graphComponent.graph
 
-      runLayout(graph)
+          graph.nodeDefaults.size = new Size(285, 100)
+          graph.nodeDefaults.style = new NodeComponentStyle(
+            this._injector,
+            this._resolver,
+            this._appRef,
+            this._zone
+          )
 
-      graphComponent.fitGraphBounds()
-    })
+          graph.edgeDefaults.style = new PolylineEdgeStyle({
+            stroke: '2px rgb(170, 170, 170)',
+            targetArrow: IArrow.NONE
+          })
+
+          graphComponent.addCurrentItemChangedListener(() => {
+            this.currentPerson = graphComponent.currentItem!.tag
+          })
+
+          this.createSampleGraph(graph)
+
+          runLayout(graph)
+
+          graphComponent.fitGraphBounds()
+        })
+      },
+        err => {
+          console.log('err loading persons: ', err);
+        })
+
+
   }
 
   zoomIn() {
@@ -127,25 +170,30 @@ export class GraphContainerComponent implements AfterViewInit {
       ICommand.FIT_GRAPH_BOUNDS.execute(null, this.gcComponent.graphComponent)
     })
   }
-}
+  createSampleGraph(graph: IGraph): void {
+    console.log('TEST NODE DATA NEW: ', this.NODE_DATA);
+    const nodeMap: { [id: number]: INode } = {}
 
-function createSampleGraph(graph: IGraph): void {
-  const nodeMap: { [name: string]: INode } = {}
-
-  NODE_DATA.forEach(nodeData => {
-    nodeMap[nodeData.name] = graph.createNode({
-      tag: new Person(nodeData)
+    this.NODE_DATA.forEach(nodeData => {
+      console.log("ND: ", nodeData);
+      nodeMap[nodeData.id] = graph.createNode({
+        tag: new Person(nodeData)
+      })
     })
-  })
 
-  EDGE_DATA.forEach(({ from, to }) => {
-    const fromNode = nodeMap[from]
-    const toNode = nodeMap[to]
-    if (fromNode && toNode) {
-      graph.createEdge(fromNode, toNode)
-    }
-  })
+    EDGE_DATA.forEach(({ from, to }) => {
+      console.log('from: ', from);
+      console.log('to: ', to);
+      const fromNode = nodeMap[from]
+      const toNode = nodeMap[to]
+      if (fromNode && toNode) {
+        graph.createEdge(fromNode, toNode)
+      }
+    })
+  }
 }
+
+
 
 function runLayout(graph: IGraph): void {
   const treeLayout = new TreeLayout()

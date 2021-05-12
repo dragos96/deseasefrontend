@@ -28,7 +28,8 @@
  ***************************************************************************/
 import { ApplicationRef, ComponentFactoryResolver, Injector, NgZone } from '@angular/core'
 import { NodeComponent } from './node.component'
-import { Person } from './person'
+// import { Person } from './person'
+import {Person} from './model/Person'
 import { INode, IRenderContext, NodeStyleBase, SvgVisual, Visual } from 'yfiles'
 
 export class NodeComponentStyle extends NodeStyleBase {

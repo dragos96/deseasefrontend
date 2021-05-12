@@ -27,7 +27,7 @@
  **
  ***************************************************************************/
 import { Component, Input, ChangeDetectorRef } from '@angular/core'
-import { Person } from './person'
+import { Person } from './../app/model/Person'
 
 function findBreak(text: string): number {
   let result = Math.max(Math.floor(text.length / 2), 20)
@@ -77,19 +77,19 @@ function findBreak(text: string): number {
             [attr.transform]="'translate(' + (zoom > zoomDetail ? '100 45' : '75 70') + ')'"
             style="text-transform: uppercase; font-weight: 400"
           >
-            {{ positionFirstLine }}
+            FIRST LINE
           </text>
           <text
             [attr.transform]="'translate(' + (zoom > zoomDetail ? '100 60' : '75 90') + ')'"
             style="text-transform: uppercase; font-weight: 400"
           >
-            {{ positionSecondLine }}
+            SECOND LINE
           </text>
         </ng-container>
         <ng-container *ngIf="zoom > zoomDetail">
-          <text transform="translate(100 75)">{{ item.email }}</text>
-          <text transform="translate(100 92)">{{ item.phone }}</text>
-          <text transform="translate(170 92)">{{ item.fax }}</text>
+          <!-- <text transform="translate(100 75)">VARSTA</text>
+          <text transform="translate(100 92)">SEX</text>
+          <text transform="translate(170 92)">GREUTATE</text> -->
         </ng-container>
       </g>
     </svg:g>
@@ -112,17 +112,19 @@ export class NodeComponent {
     return 0.4
   }
 
-  get positionFirstLine() {
-    const pos = this.item.position
-    return pos.substring(0, findBreak(pos))
-  }
+  // get positionFirstLine() {
+  //   const pos = this.item.position
+  //   return pos.substring(0, findBreak(pos))
+  // }
 
-  get positionSecondLine() {
-    const pos = this.item.position
-    return pos.substring(findBreak(pos) + 1)
-  }
+  // get positionSecondLine() {
+  //   const pos = this.item.position
+  //   return pos.substring(findBreak(pos) + 1)
+  // }
 
+  // TODO: modify (fn, ln)
   get nameAbbreviation() {
+   
     if (this.zoom >= this.zoomIntermediate) {
       return this.item.name
     }
@@ -131,6 +133,7 @@ export class NodeComponent {
     for (let i = 1; i < strings.length; i++) {
       converted += ` ${strings[i]}`
     }
+    console.log('name abbreviation called: ' + converted)
     return converted
   }
 }
